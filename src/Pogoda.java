@@ -16,9 +16,10 @@ public class Pogoda {
         String mekka = "https://yandex.ru/pogoda/41030";
         String istambul = "https://yandex.ru/pogoda/11508";
         String americanBich = "https://yandex.ru/pogoda/?lat=30.57460022&lon=-81.44509125";
+        String dom = "https://yandex.ru/pogoda/?lat=55.89193726&lon=49.30046844";
 
-        String[] urls = {vysokayaGora, cairo, cuberPedi, mekka, istambul, americanBich};
-        String[] goroda = {"ВЫСОКАЯ ГОРА", "КАИР", "КУБЕР-ПЕДИ", "МЕККА", "ИСТАМБУЛ", "АМЕРИКАН-БИЧ"};
+        String[] urls = {vysokayaGora, cairo, cuberPedi, mekka, istambul, americanBich, dom};
+        String[] goroda = {"ВЫСОКАЯ ГОРА", "КАИР", "КУБЕР-ПЕДИ", "МЕККА", "ИСТАМБУЛ", "АМЕРИКАН-БИЧ", "ДОМ"};
         Map<String, String> map = new LinkedHashMap<>();
         for (int i = 0; i < goroda.length; i++) {
             map.put(goroda[i], urls[i]);
@@ -30,6 +31,7 @@ public class Pogoda {
         String vlazhnost = "Влажность: \\d+%";
         String davlenie = "Давление: \\d+ Миллиметров ртутного столба";
         String veter = "\"wind-speed\">\\d+.\\d+</span>";
+        String svetovoiDen = ">Световой день</h2><div class=\"sun-card__day-duration-value\">\\d*.*?</div>";
 
         for (int i = 0; i < map.size(); i++) {
             StringBuilder sb = new StringBuilder();
@@ -65,9 +67,13 @@ public class Pogoda {
             Pattern davlen = Pattern.compile(davlenie);
             Matcher davl = davlen.matcher(sb.toString());
 
-            //VETER
+            //ВЕТЕР
             Pattern vete = Pattern.compile(veter);
             Matcher vet = vete.matcher(sb.toString());
+
+            //СВЕТОВОЙ ДЕНЬ
+            Pattern svetovojDen = Pattern.compile(svetovoiDen);
+            Matcher svetovDen = svetovojDen.matcher(sb.toString());
 
             while (temp.find())
                 System.out.print("Текущая температура: " + temp.group().replaceAll("Текущая температура</span><span class=\"temp__value temp__value_with-unit\">|</span>", ""));
@@ -86,6 +92,9 @@ public class Pogoda {
 
             while (vet.find())
                 System.out.println("Ветер: "+vet.group().replaceAll("\"wind-speed\">|</span>", "") + " м/с");
+
+            while (svetovDen.find())
+                System.out.println("Световой день: "+svetovDen.group().replaceAll(">Световой день</h2><div class=\"sun-card__day-duration-value\">|</div>", "") + "");
 
             System.out.println();
         }
